@@ -1203,16 +1203,15 @@ window.AN_CONTENT = {
     subject:"O5-4 — “The Fourth Eye”",
     designation:"Group-██████",
     fileReference:"O5CD-04",
-    revision:"8",
+    // scope/revision removed per E.18
     lastReviewed:"2026-10-12",
-    notice:"Access is limited to members of Archive Nine and to persons the Group Leader has authorized. Do not copy, transmit, or reproduce this file. Do not discuss its contents with anyone. Do not open it in a public place, on shared equipment, or over any network you do not control. Unauthorized disclosure is [REDACTED].",
-    scope:"One Council seat, and the reports gathered about it",
-    heldBy:"Archive Nine · the Group archive",
+    notice:"Access is limited to members of Archive Nine and to persons the compilation team has authorized. Do not copy, transmit, or reproduce this file. Do not discuss its contents with anyone. Do not open it in a public place, on shared equipment, or over any network you do not control. Unauthorized disclosure is [REDACTED].",
+    heldBy:"Archive Nine",
     coverAbstract:[
       "This file records what Archive Nine holds in respect of the Council seat designated O5-4, and in respect of the group of activities gathered under the provisional designation Group-██████. It is an inventory of material, and not an assessment of a person.",
       "Nothing here is written from the subject’s side of the table. We do not hold her testimony, her records, or her correspondence. Where the file appears to describe her, it describes instead the traces she has left, and the accounts of those who believe they have seen her."
     ],
-    coverSignoff:"Compiled by the compilation team of Archive Nine · issued under the authority of the Group Leader · held in the Group archive and reviewed at each revision"
+    coverSignoff:"Compiled by the compilation team of Archive Nine · issued under the authority of the compilation team · held in the Group archive and reviewed at each revision"
   },
 
   /* File pages, in order. kind: cover | intro | toc | section | custody | admin */
@@ -1634,16 +1633,14 @@ function renderPage(p, i, total){
   var inner = "";
   if(p.kind === "cover"){
     var m = C.meta;
-    inner += '<div class="cbar">' + esc(m.classification) + '</div>';
+    inner += '<div class="cbar">' + esc('ARCHIVE NINE (A.N.)') + '</div>';
     inner += '<header class="doc-head"><div class="doc-kicker">' + esc(m.issuingAuthority) + '</div>';
     inner += '<h1>' + esc(m.title) + '</h1>';
     inner += '<div class="doc-subject">Subject: ' + inline(m.subject) + '</div>';
     inner += '<dl class="meta">';
     inner += metaRow("Designation", inline(m.designation));
     inner += metaRow("File Reference", esc(m.fileReference));
-    inner += metaRow("Revision", esc(m.revision));
     inner += metaRow("Last Reviewed", esc(m.lastReviewed));
-    inner += metaRow("Scope", inline(m.scope));
     inner += metaRow("Held By", inline(m.heldBy));
     inner += '</dl></header>';
     inner += '<div class="notice">' + inline(m.notice) + '</div>';
@@ -3327,10 +3324,10 @@ function officeBoot(){
       + '<div class="ch-h oa-h">Office of the 4th \u2014 Restricted Archive</div>'
       + '<div class="ch-s oa-s">Records held at this terminal. sealed entries require <span class="oa-glitch" data-rt="' + bars(6) + '">' + bars(6) + '</span> Biometric Clearance.</div>'
       + '<ul class="oa-list">'
-      + entry('group', 'GROUP-' + bars(6), 'CODENAME: ARCHIVE NINE \u00b7 O5-4 INVESTIGATION', 'OPEN', 'open')
-      + entry('office', 'O4/INV-AN', 'OFFICE OF THE 4TH \u00b7 INVESTIGATION RECORD', 'OPEN', 'open')
-      + entry('notes', bars(8), bars(14) + ' \u00b7 ' + bars(6), 'LOCKED', 'locked', true)
-      + entry('personnel', bars(6), bars(10) + ' \u00b7 ' + bars(8), 'LOCKED', 'locked', true)
+      + entry('group', 'GROUP-' + bars(6), 'CODENAME: ARCHIVE NINE · O5-4 INVESTIGATION', 'OPEN', 'open')
+      + entry('office', 'O4/INV-AN', 'OFFICE OF THE 4TH · INVESTIGATION RECORD', 'OPEN', 'open')
+      + entry('notes', bars(8), bars(14) + ' · ' + bars(6), 'LOCKED', 'locked', true)
+      + entry('personnel', bars(6), bars(10) + ' · ' + bars(8), 'LOCKED', 'locked', true)
       + '</ul>'
       + '<div class="ch-f">Select a record to open</div>'
       + '<div class="ch-raisa" role="status" aria-live="polite"></div>'
