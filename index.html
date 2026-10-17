@@ -1081,7 +1081,7 @@ html.lite .off-gate .og-shield{ animation:none; }
   <div class="brand">
     <svg class="glyph" aria-hidden="true" focusable="false" role="img" aria-label="Archive Nine roundel"><use href="#anRoundel"/></svg>
     <span class="bname">ARCHIVE&nbsp;NINE · ACCESS&nbsp;TERMINAL</span>
-  </div>
+</div>
   <div class="spacer"></div>
   <button type="button" class="chip btn" id="btnContents" title="Table of contents">☰ Contents</button>
   <button type="button" class="chip btn" id="btnClose" title="Close the dossier folder">✕ Close</button>
@@ -1102,7 +1102,7 @@ html.lite .off-gate .og-shield{ animation:none; }
       <div class="book" id="book"></div>
     </article>
     <nav class="mobileStrip" id="mobileStrip" aria-label="File pages (compact)"></nav>
-  </div>
+</div>
 </main>
 
 <div class="pagefoot">
@@ -1132,10 +1132,10 @@ html.lite .off-gate .og-shield{ animation:none; }
         <div class="fc-rule"></div>
         <div class="fc-sub">Subject: O5-4 — “The Fourth Eye”</div>
         <div class="fc-ref">File O5CD-04 · revision 8 · internal circulation</div>
-      </div>
-      <div class="fc-face-back"></div>
     </div>
+      <div class="fc-face-back"></div>
   </div>
+</div>
 </div>
 
 <!-- =========================== BOOT =========================== -->
@@ -1145,17 +1145,17 @@ html.lite .off-gate .og-shield{ animation:none; }
       <span class="bb-l"><span class="lamp"></span>ARCHIVE NINE ACCESS TERMINAL</span>
       <span class="bb-c" id="bootStep">INITIALIZING</span>
       <span class="bb-r" id="bootClock">--:--:--</span>
-    </div>
+  </div>
     <div class="boot-body">
       <div class="boot-log" id="bootOut"></div>
       <aside class="boot-side" id="bootSide" aria-hidden="true"></aside>
-    </div>
+  </div>
     <div class="boot-foot">
       <span class="boot-prog"><i id="bootProg"></i></span>
       <span id="bootMeta">SESSION ----</span>
       <span class="boot-hint" id="bootHint"></span>
-    </div>
   </div>
+</div>
 </div>
 
 <!-- =========================== OFFICE OF THE 4TH — SECURE TERMINAL =========================== -->
@@ -1172,21 +1172,21 @@ html.lite .off-gate .og-shield{ animation:none; }
       <span id="offMeta">SESSION ----</span>
       <span class="of-hint" id="offHint"></span>
     </footer>
-  </div>
+</div>
 </div>
 
 <!-- =========================== OFFICE DOCUMENT VIEWER =========================== -->
 <div id="offDoc" role="dialog" aria-modal="true" aria-label="Office of the Fourth restricted record">
   <div class="od-bar">
     <button type="button" class="od-back" id="offDocBack">&#8592; Return to archive</button>
-  </div>
+</div>
   <div class="od-body" id="offDocScroll"><div class="od-doc" id="offDocBody"></div></div>
 </div>
 
 <noscript>
   <div style="position:fixed;inset:0;z-index:99;background:#0b0805;color:#c9a35e;font-family:monospace;padding:40px;display:grid;place-items:center;text-align:center">
     This document requires JavaScript to render.
-  </div>
+</div>
 </noscript>
 
 <!-- =========================================================================
@@ -1410,17 +1410,17 @@ window.AN_CONTENT = {
     /* Document Two — the Office's own investigation record. Formal third-person. */
     doc2:
       '<div class="od-head">'
-    +   '<div class="odh-cls">O5 EYES ONLY \u00b7 LEVEL 5 \u00b7 O4/INV-AN</div>'
+    +   '<div class="odh-cls">O5 EYES ONLY \u00b7 O4/INV-AN</div>'
     +   '<h1 class="odh-t">Office of the Fourth \u2014 Investigation Record</h1>'
-    +   '<div class="odh-s">Group-' + RD + ', self-designated \u201cArchive Nine\u201d (A.N.) \u00b7 status: open \u00b7 no terminal action</div>'
+    +   '<div class="odh-s">Group-' + RD + ', self-designated \u201cArchive Nine\u201d (A.N.) · status: open</div>'
     + '</div>'
     + '<dl class="od-meta">'
-    +   '<div class="odm"><dt>Reference</dt><dd>O4-INV/AN-' + red(3) + ' \u00b7 revision 3</dd></div>'
+    +   '<div class="odm"><dt>Reference</dt><dd>O4-INV/AN-' + red(3) + ' </dd></div>'
     +   '<div class="odm"><dt>Issuing office</dt><dd>Office of the Fourth \u00b7 O5-4</dd></div>'
-    +   '<div class="odm"><dt>Classification</dt><dd>O5 EYES ONLY \u00b7 LEVEL 5</dd></div>'
+    +   '<div class="odm"><dt>Classification</dt><dd>O5 EYES ONLY </dd></div>'
     +   '<div class="odm"><dt>Subject</dt><dd>Group-' + RD + ' (\u201cArchive Nine\u201d)</dd></div>'
     +   '<div class="odm"><dt>Opened</dt><dd>' + red(4) + '-' + red(2) + '-' + red(2) + '</dd></div>'
-    +   '<div class="odm"><dt>Disposition</dt><dd>no terminal action</dd></div>'
+    +   ''
     + '</dl>'
     + sec('Executive Summary', [
         p('The Office of the Fourth opened this record to answer a single question: who is Archive Nine? The Group holds no charter this Office has recognised, is registered with no authority we can reach, and maintains a standing interest in this seat and in ' + red(2) + ' other Council seats. It has been reported operating, more than once, inside facilities it should not have been able to enter.'),
