@@ -2943,7 +2943,6 @@ function boot(){
     {p:"line", s:"", c:""},
     {p:"line", s:"ARCHIVE NINE  \u00b7  SESSION ACCESS GRANTED", c:"banner"},
     {p:"line", s:"session established \u00b7 file index available", c:"ok"},
-    {p:"wait", dur:420},
     {p:"dots", pre:"Mounting seat index", post:"13 seats · 12 sealed"},
     {p:"dots", pre:"Awaiting operator selection", post:null},
     {p:"line", s:"terminal ready · select a record to continue", c:"ok"}
@@ -3465,66 +3464,109 @@ function officeBoot(){
       var d = document.createElement("div"); d.className = "ocl-line" + (klass ? " " + klass : "");
       d.innerHTML = html; box.appendChild(d); box.scrollTop = box.scrollHeight; return d;
     }
-    /* 1 — RAISA records request */
-    head(1, "RAISA records request");
-    cl('<span class="ocl-label">RAISA RECORDS REQUEST INITIATED</span>');
-    Sound.secure(); prog.style.width = "14%";
-    hold(1200, step2);
+    /* masked credential entry. every:1 = a keystroke per character. The pauses
+       map holds the delay before that character, which is how the second attempt
+       hesitates exactly where she went wrong. */
+    function dots(node, n, cb, opt){
+      if(!node) return cb();
+      opt = opt || {};
+      var step = opt.step || 52, jit = opt.jitter || 0, pauses = opt.pauses || null, every = opt.every || 2;
+      var k = 0, lastKey = 0;
+      if(rm){ node.textContent = new Array(n + 1).join("\u2022"); return hold(20, cb); }
+      (function tick(){
+        var wait = (pauses && pauses[k + 1] !== undefined) ? pauses[k + 1] : step;
+        setTimeout(function(){
+          k++; node.textContent = new Array(k + 1).join("\u2022");
+          /* the credential fills fast, but the keys keep the Office's own, sparser
+             cadence - one key per character at 16 a second is a machine-gun */
+          if(k % every === 0){ var now = Date.now(); if(now - lastKey >= KEY_GAP_OFF){ lastKey = now; Sound.key(); } }
+          if(k >= n) return setTimeout(cb, 240);
+          tick();
+        }, wait + Math.random() * jit);
+      })();
+    }
+    /* 1 ÔÇö classification warning */
+    head(1, "classification");
+    var w = document.createElement("div"); w.className = "ocl-warn";
+    w.innerHTML = '<div class="ocl-wt">WARNING: THE FOLLOWING INFORMATION IS CLASSIFIED (LEVEL 5)</div>'
+      + '<div class="ocl-ws">Failure to abide by security clearance may result in termination.</div>';
+    box.appendChild(w); Sound.warn(); prog.style.width = "12%";
+    hold(2400, step2);
 
-    function step2(){                                  /* 2 — Site director authorisation */
-      head(2, "Site director authorisation");
-      cl('<span class="ocl-label">PENDING: SITE DIRECTOR AUTHORISATION</span>');
-      prog.style.width = "28%";
-      hold(1500, function(){
-        cl('<span class="ocl-ok">_authorised</span>');
-        Sound.secure();
+    function step2(){                                  /* 2 ÔÇö credentials */
+      head(2, "security credentials");
+      var l1 = cl('<span class="ocl-label">PLEASE ENTER SECURITY CREDENTIALS (LEVEL 5):</span> <span class="ocl-val" data-dots></span>');
+      Sound.room(true);                                /* she is sitting in a room; it is audible now */
+      /* randomised: now and then she gets it first time; usually she fumbles once and corrects it */
+      var fumbles = Math.random() < 0.6;
+      function accept(){
+        cl('<span class="ocl-ok">_confirmed</span>');
+        Sound.secure(); Sound.breathe(); Sound.room(false);
         hold(900, step3);
+      }
+      dots(l1.querySelector("[data-dots]"), 17, function(){
+        if(!fumbles){ prog.style.width = "26%"; return accept(); }
+        cl('<span class="ocl-bad">_login failed</span>');
+        Sound.deny();
+        hold(560, function(){
+          Sound.clip("sigh").then(function(){          /* she reacts ÔÇö a real recording, not a machine */
+            hold(460, function(){
+              Sound.clip("dammit").then(function(){    /* one word, and nothing else */
+                hold(2000, function(){                 /* two seconds of nothing but the room */
+                  var l2 = cl('<span class="ocl-label">PLEASE ENTER SECURITY CREDENTIALS (LEVEL 5):</span> <span class="ocl-val" data-dots></span>');
+                  prog.style.width = "26%";
+                  dots(l2.querySelector("[data-dots]"), 18, function(){
+                    accept();
+                  }, { step:150, jitter:60, every:1, pauses:{ 10:520, 11:300 } });   /* she checks the one she doubted */
+                });
+              });
+            });
+          });
+        });
+      }, { step:62, jitter:22, every:1 });
+    }
+    function step3(){                                  /* 3 ÔÇö fingerprint */
+      head(3, "biometric \u00b7 fingerprint");
+      cl('<span class="ocl-label">PLEASE INSERT BIOMETRICS PERIPHERAL TO CONTINUE</span>');
+      Sound.press();
+      hold(700, function(){
+        cl('<span class="ocl-label">PRESS CONFIGURED FINGER INTO PERIPHERAL NOW.</span>');
+        prog.style.width = "40%";
+        hold(1150, function(){
+          cl('<span class="ocl-ok">_confirmed</span>');
+          Sound.secure(); Sound.breathe();
+          hold(850, step4);
+        });
       });
     }
-    function step3(){                                  /* 3 — O5 liaison countersignature */
-      head(3, "O5 liaison countersignature");
-      cl('<span class="ocl-label">PENDING: O5 LIAISON COUNTERSIGNATURE</span>');
-      prog.style.width = "42%";
-      hold(1500, function(){
-        cl('<span class="ocl-ok">_countersigned</span>');
-        Sound.secure();
-        hold(900, step4);
+    function step4(){                                  /* 4 ÔÇö retinal scan */
+      head(4, "biometric \u00b7 retinal scan");
+      cl('<span class="ocl-label">PLEASE LOOK INTO RETINAL SCANNER NOW</span>');
+      prog.style.width = "54%"; Sound.scan();
+      hold(1550, function(){
+        cl('<span class="ocl-ok">_confirmed</span>');
+        Sound.secure(); Sound.sigh();
+        hold(850, step5);
       });
     }
-    function step4(){                                  /* 4 — Cognitohazard screening */
-      head(4, "Cognitohazard screening");
-      cl('<span class="ocl-label">PERFORMING COGNITOHAZARD SCREENING</span>');
-      prog.style.width = "56%"; Sound.scan();
-      hold(1400, function(){
-        cl('<span class="ocl-ok">_clear</span>');
-        Sound.secure();
-        hold(800, step5);
-      });
+    function step5(){                                  /* 5 ÔÇö identity */
+      head(5, "identity");
+      cl('<span class="ocl-id">WELCOME, O5-4@SCIPNET</span>');
+      prog.style.width = "68%"; Sound.secure();
+      hold(1300, step6);
     }
-    function step5(){                                  /* 5 — Anomalous-media check */
-      head(5, "Anomalous-media check");
-      cl('<span class="ocl-label">ANOMALOUS-MEDIA CHECK IN PROGRESS</span>');
-      prog.style.width = "70%";
-      hold(1400, function(){
-        cl('<span class="ocl-ok">_passed</span>');
-        Sound.secure();
-        hold(800, step6);
-      });
+    function step6(){                                  /* 6 ÔÇö access log */
+      head(6, "access log");
+      cl('<span class="ocl-label">THE TIME AND DATE OF YOUR ACCESS TO THIS FILE HAS BEEN LOGGED</span>');
+      cl('<span class="ocl-label">AND REPORTED TO THE RECORDS AND INFORMATION SECURITY</span>');
+      cl('<span class="ocl-label">ADMINISTRATION (RAISA).</span>');
+      prog.style.width = "84%";
+      hold(1700, step7);
     }
-    function step6(){                                  /* 6 — Cipher envelope */
-      head(6, "Cipher envelope");
-      cl('<span class="ocl-label">ESTABLISHING CIPHER ENVELOPE</span>');
-      prog.style.width = "84%"; Sound.secure();
-      hold(1500, step7);
-    }
-    function step7(){                                  /* 7 — Final seal verification */
-      head(7, "Final seal verification");
-      cl('<span class="ocl-label">VERIFYING FINAL SEAL</span>');
+    function step7(){                                  /* 7 ÔÇö the record */
+      head(7, "file");
       prog.style.width = "100%"; Sound.open();
-      hold(1200, function(){
-        cl('<span class="ocl-ok">_sealed</span>');
-        hold(700, function(){ stepEl.textContent = "RECORD"; openDoc(id === "notes" ? "notes" : "personnel", true); });
-      });
+      hold(750, function(){ stepEl.textContent = "RECORD"; openDoc(id === "notes" ? "notes" : "personnel", true); });
     }
   }
 
