@@ -1133,7 +1133,7 @@ html.lite .off-gate .og-shield{ animation:none; }
         <div class="fc-doc">O5 Command Dossier</div>
         <div class="fc-rule"></div>
         <div class="fc-sub">Subject: O5-4 — “The Fourth Eye”</div>
-        <div class="fc-ref">File O5CD-04 · revision 8 · internal circulation</div>
+        <div class="fc-ref">File O5CD-04 · Investigations and Documentations</div>
     </div>
       <div class="fc-face-back"></div>
   </div>
@@ -1205,7 +1205,8 @@ window.AN_CONTENT = {
     subject:"O5-4 — “The Fourth Eye”",
     designation:"Group-██████",
     fileReference:"O5CD-04",
-    // scope/revision removed per E.18
+    // scope removed per E.18 (its cover row is gone); revision kept — the REV chip reads it
+    revision:"8",
     lastReviewed:"2026-10-12",
     notice:"Access is limited to members of Archive Nine and to persons the compilation team has authorized. Do not copy, transmit, or reproduce this file. Do not discuss its contents with anyone. Do not open it in a public place, on shared equipment, or over any network you do not control. Unauthorized disclosure is [REDACTED].",
     heldBy:"Archive Nine",
@@ -1636,7 +1637,7 @@ function renderPage(p, i, total){
   if(p.kind === "cover"){
     var m = C.meta;
     inner += '<div class="cbar">' + esc('ARCHIVE NINE (A.N.)') + '</div>';
-    inner += '<header class="doc-head"><div class="doc-kicker">' + esc(m.issuingAuthority) + '</div>';
+    inner += '<header class="doc-head">';
     inner += '<h1>' + esc(m.title) + '</h1>';
     inner += '<div class="doc-subject">Subject: ' + inline(m.subject) + '</div>';
     inner += '<dl class="meta">';
