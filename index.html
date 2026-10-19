@@ -1247,15 +1247,37 @@ window.AN_CONTENT = {
       ],
       log:[
         { r:"1", d:"2026-09-24", a:"File opened; scope set to a single Council seat.", b:"Compilation" },
-        { r:"2", d:"2026-09-27", a:"Identification material entered; primary codename assigned.", b:"Records" },
-        { r:"3", d:"2026-10-01", a:"Attributed identity assessed; reasoning held out of the file.", b:"Analysis" },
-        { r:"4", d:"2026-10-04", a:"Photographic findings entered as unconfirmed.", b:"Field Liaison" },
-        { r:"5", d:"2026-10-07", a:"Conflicting historical accounts recorded.", b:"Records" },
-        { r:"6", d:"2026-10-09", a:"Anomalous-characteristics section drafted; no explanation favoured.", b:"Analysis" },
-        { r:"7", d:"2026-10-11", a:"Watch section drafted; working belief logged as a hypothesis only.", b:"Field Liaison" },
-        { r:"8", d:"2026-10-12", a:"Scope review; internal concerns entered; file placed under review.", b:"Compilation" },
-        { r:"9", d:"2026-10-12", a:"Superseded text struck and replacements entered; file re-issued as revision 8.", b:"Compilation" },
-        { r:"10", d:"2026-10-12", a:"Integrity check completed; no untraced entry found in this revision.", b:"Records" }
+        { r:"2", d:"2026-09-24", a:"Two working copies struck; both retained by the compilation team.", b:"Records" },
+        { r:"3", d:"2026-09-25", a:"Handling convention agreed: an entry carries its assessment without the reasoning behind it.", b:"Compilation" },
+        { r:"4", d:"2026-09-27", a:"Identification material entered; primary codename assigned.", b:"Records" },
+        { r:"5", d:"2026-09-28", a:"A second appellation found in a recovered memorandum; entered as a further sighting.", b:"Analysis" },
+        { r:"6", d:"2026-09-29", a:"Provenance of the second appellation not established; the entry stands unverified.", b:"Analysis" },
+        { r:"7", d:"2026-09-30", a:"Request for the reasoning behind the attribution refused.", b:"████ · lead" },
+        { r:"8", d:"2026-10-01", a:"Attributed identity assessed; reasoning held out of the file.", b:"Analysis" },
+        { r:"9", d:"2026-10-02", a:"Two drafts of §2 compared; the shorter form retained.", b:"Compilation" },
+        { r:"10", d:"2026-10-03", a:"Field material received and held four days pending verification.", b:"Field Liaison" },
+        { r:"11", d:"2026-10-04", a:"Photographic findings entered as unconfirmed.", b:"Field Liaison" },
+        { r:"12", d:"2026-10-05", a:"One finding returned to the field for confirmation of provenance.", b:"Records" },
+        { r:"13", d:"2026-10-06", a:"Provenance of the returned finding still not established; the entry is left pending.", b:"████ · lead" },
+        { r:"14", d:"2026-10-07", a:"Conflicting historical accounts recorded.", b:"Records" },
+        { r:"15", d:"2026-10-07", a:"The two accounts do not reconcile; both are retained and neither is preferred.", b:"Analysis" },
+        { r:"16", d:"2026-10-08", a:"One page replaced for a strike-through error; the superseded page withdrawn.", b:"Records" },
+        { r:"17", d:"2026-10-09", a:"Anomalous-characteristics section drafted; no explanation favoured.", b:"Analysis" },
+        { r:"18", d:"2026-10-09", a:"A working copy surrendered at the close of a review; withdrawn under witness.", b:"████ · custodian" },
+        { r:"19", d:"2026-10-10", a:"The file was asked for by reference number from outside the compilation team; the request was refused.", b:"████ · oversight" },
+        { r:"20", d:"2026-10-10", a:"Refusal recorded and countersigned.", b:"████ · lead" },
+        { r:"21", d:"2026-10-11", a:"Watch section drafted; working belief logged as a hypothesis only.", b:"Field Liaison" },
+        { r:"22", d:"2026-10-11", a:"Working belief restated in plainer terms at the compilation team’s direction.", b:"Compilation" },
+        { r:"23", d:"2026-10-12", a:"Scope review; internal concerns entered; file placed under review.", b:"Compilation" },
+        { r:"24", d:"2026-10-12", a:"Seal broken for the review and resealed; the break is recorded here as required.", b:"████ · custodian" },
+        { r:"25", d:"2026-10-12", a:"Superseded text struck and replacements entered; file re-issued as revision 8.", b:"Compilation" },
+        { r:"26", d:"2026-10-12", a:"Withdrawn material retained by Records; not to be circulated.", b:"Records" },
+        { r:"27", d:"2026-10-12", a:"Courier run to the Group archive completed; receipt countersigned on return.", b:"Field Liaison" },
+        { r:"28", d:"2026-10-12", a:"Index to the appendices corrected; no entry struck.", b:"Records" },
+        { r:"29", d:"2026-10-12", a:"A reader’s marginal note on §9 entered for review at the next revision.", b:"Analysis" },
+        { r:"30", d:"2026-10-12", a:"Request to extend §6 refused; the material gathered does not support it.", b:"████ · oversight" },
+        { r:"31", d:"2026-10-12", a:"Handling log proofread against the file; two omissions found and entered.", b:"Compilation" },
+        { r:"32", d:"2026-10-12", a:"Integrity check completed; no untraced entry found in this revision.", b:"Records" }
       ],
       tail:[
         { t:"p", x:"The file is held in the Group archive. Copies are made only by the compilation team, and a superseded revision is withdrawn when the next is issued." },
@@ -2672,6 +2694,11 @@ var Sound = (function(){
       if(realOn) hit("mouse", REAL_MOUSE * (0.78 + Math.random() * 0.44), 0.92 + Math.random() * 0.18);
       clack(0.05, 205 + Math.random() * 70, 6);
     },
+    /* A contents row answers the pointer before it is pressed: a low, quiet thud.
+       It reads `ctx` directly rather than calling ensure(), so a hover before the
+       first real gesture can never create a suspended AudioContext; it returns
+       false when it stayed silent, so the caller does not remember the row. */
+    thud:function(){ if(!ctx || !bus) return false; thunk(0.022, 74); return true; },
     room:room,
     clip:clip,
     scan:function(){ whir(0.72, 300, 1480, 0.02, 2.2); voice("sine", 470, 0.6, 0.008, 1180); },
@@ -2711,6 +2738,20 @@ document.addEventListener("click", function(ev){
   var target = (t && t.closest) ? t.closest("button,[role=button],a,input,select,summary") : null;
   if(!target || Sound._pressed) return;
   Sound.press();
+});
+
+/* The contents list answers the pointer: crossing into a row gives a single quiet thud.
+   A row is remembered only once it has actually answered, so a hover during the boot —
+   before the audio is armed — does not consume the row's thud. Moving about inside one
+   row thuds once; leaving the list and coming back thuds again. */
+var _thudRow = null;
+document.addEventListener("mouseover", function(ev){
+  var t = ev.target;
+  var row = (t && t.closest) ? t.closest(".contents .go") : null;
+  if(!row){ _thudRow = null; return; }
+  if(row === _thudRow) return;
+  if(Sound.thud() !== true) return;
+  _thudRow = row;
 });
 
 /* ------------------------------------------------------------------ boot */
