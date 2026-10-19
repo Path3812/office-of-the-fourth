@@ -92,6 +92,55 @@ html.glitch #crt{ animation:glitchShift .18s steps(2) 1; }
 @keyframes glitchShift{ 0%{ transform:translate(0,0); } 33%{ transform:translate(-2px,1px); } 66%{ transform:translate(2px,-1px); } 100%{ transform:translate(0,0); } }
 html.rm #crt::after{ animation:none; }
 
+/* ---- item 37: the idle screensaver. A file left open without input fades into the
+   SCP-logo background: the Office's blue for its own records, Archive Nine's amber
+   for the dossier. The mark behind it is the real extruded 3D logo, still turning —
+   Archive Nine's brass plaque, or the Office's Fourth Eye, whose rings keep orbiting
+   the way they do before the Office terminal boots. Nothing dismisses it but the
+   control below it. ---- */
+#idle{
+  position:fixed; inset:0; z-index:150; display:none; grid-template-rows:1fr auto; text-align:center;
+  opacity:0; transition:opacity .9s var(--ease); pointer-events:none;
+}
+#idle.on{ display:grid; }
+#idle.vis{ opacity:1; pointer-events:auto; }
+#idle.amber{ color:var(--chrome); background:radial-gradient(130% 100% at 50% 8%, #171008 0%, #120d07 42%, var(--bg) 100%); }
+#idle.blue{ color:var(--o-acc); background:radial-gradient(125% 100% at 50% 26%, #0a131a 0%, #04070a 78%); }
+#idle.amber::before,#idle.blue::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(closest-side at 50% 44%, currentColor 0%, transparent 72%); opacity:.13;
+  animation:glowBreathe 7.5s var(--ease) infinite;
+}
+#idle .idl-stage{ position:absolute; inset:0; display:grid; place-items:center; padding-bottom:9vh;
+  perspective:1500px; perspective-origin:50% 47%; }
+#idle .idl-logo{ position:relative; --mw:min(66vmin,700px); width:var(--mw); aspect-ratio:1/1;
+  --u:calc(var(--mw)/72);
+  transform-style:preserve-3d; animation:plogoSpin 46s linear infinite; will-change:transform; }
+#idle.amber #idlEye,#idle.blue #idlScp{ display:none; }
+#idle .idl-in{ position:relative; z-index:1; align-self:end; justify-self:center; padding:0 24px max(28px,7vh); }
+#idle .idl-t{ font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:currentColor; }
+#idle .idl-s{ margin-top:9px; font-size:10.5px; letter-spacing:.12em; color:var(--steel-dim); }
+#idle.blue .idl-s{ color:var(--o-dim); }
+#idle .idl-b{
+  margin-top:30px; background:none; border:0; cursor:pointer; font:inherit;
+  font-size:11.5px; letter-spacing:.26em; text-transform:uppercase; color:currentColor;
+  padding:8px 4px; opacity:.78;
+}
+#idle .idl-b:hover{ opacity:1; }
+#idle .idl-b:focus-visible{ outline:none; opacity:1; text-decoration:underline; text-underline-offset:5px; }
+html.rm #idle::before{ animation:none; }
+html.rm #idle .idl-logo{ animation:none; transform:rotateX(13deg) rotateY(-34deg); }
+html.lite #idle::before{ animation:none; }
+html.lite #idle .idl-logo{ animation:none; transform:rotateX(13deg) rotateY(-34deg); }
+/* while the screensaver is up, the ambient marks behind it stand down: nothing is
+   visible under an opaque lock screen, so nothing there should be spinning */
+html.idle-up #bg .plogo,html.idle-up .off-frame .off-bg,html.idle-up #offDoc .od-bg{ display:none; }
+@media (max-width:640px){
+  #idle .idl-logo{ --mw:min(62vmin,400px); }
+  #idle .idl-t{ font-size:10px; letter-spacing:.26em; }
+  #idle .idl-b{ font-size:10.5px; letter-spacing:.2em; }
+}
+
 /* =========================== TOP BAR =========================== */
 .top{ position:relative; z-index:2; display:flex; align-items:center; gap:14px; padding:9px 16px;
   font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; text-transform:uppercase;
@@ -948,6 +997,46 @@ html.lite .oa-glitch::after{ animation-duration:7.5s; }
 .od-note b{ color:var(--o-acc); font-weight:400; }
 .od-sign{ margin-top:26px; padding-top:14px; border-top:1px solid var(--o-line-2); font-size:11px; line-height:1.7; color:var(--o-dim); letter-spacing:.06em; }
 .od-sign b{ color:var(--o-white); font-weight:600; letter-spacing:.16em; }
+/* ---- item 36: the record's annexes, pressed open one at a time ---- */
+.od-annex{ margin:30px 0 0; }
+.od-annex .oda-cap{ font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--o-dim); border-bottom:1px solid var(--o-line-2); padding-bottom:7px; margin-bottom:14px; }
+.od-fold{ margin:0 0 10px; border:1px solid var(--o-line); border-left:3px solid var(--o-acc-2); border-radius:3px; background:#080e14; }
+.od-fold>summary{ display:flex; align-items:center; gap:10px; cursor:pointer; list-style:none; padding:11px 13px;
+  color:var(--o-acc); font-size:10px; letter-spacing:.2em; text-transform:uppercase; }
+.od-fold>summary::-webkit-details-marker{ display:none; }
+.od-fold>summary::before{ content:"\25B8"; flex:0 0 auto; font-size:9px; color:var(--o-acc-2); transition:transform .18s var(--ease); }
+.od-fold[open]>summary::before{ transform:rotate(90deg); }
+.od-fold>summary:hover{ background:#0c1a23; color:#bfe0f2; }
+.od-fold>summary:focus-visible{ outline:2px solid var(--o-acc); outline-offset:-2px; }
+.od-fold[open]>summary{ border-bottom:1px solid var(--o-line); }
+.od-fold .odf{ padding:13px 15px 5px; }
+.od-fold .odf p{ font-family:var(--serif); font-size:14.5px; line-height:1.68; color:#cdd9e2; margin:0 0 11px; }
+.od-fold .odf ul{ margin:0 0 11px; padding-left:20px; }
+.od-fold .odf li{ font-family:var(--serif); font-size:14.5px; line-height:1.6; color:#cdd9e2; margin:0 0 7px; }
+.od-fold .odf p:last-child,.od-fold .odf ul:last-child{ margin-bottom:9px; }
+.od-tab{ width:100%; border-collapse:collapse; margin:0 0 12px; }
+.od-tab th{ text-align:left; font-weight:400; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--o-dim);
+  border-bottom:1px solid var(--o-line-2); padding:6px 9px 6px 0; }
+.od-tab td{ border-bottom:1px solid var(--o-line); padding:7px 9px 7px 0; color:var(--o-ink); font-size:11px; letter-spacing:.04em; vertical-align:top; }
+.od-tab td.neg{ color:var(--o-dim); }
+.od-tab tr:last-child td{ border-bottom:0; }
+/* ---- item 35: the authorisation block at the end of the record ---- */
+.od-act{ margin:30px 0 6px; border:1px solid var(--o-red-2); border-left:3px solid var(--o-red); border-radius:3px; background:#0c0806; padding:15px 16px 16px; }
+.od-act .oac-h{ font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--o-red); }
+.od-act .oac-t{ margin:9px 0 13px; font-family:var(--serif); font-size:14.5px; line-height:1.65; color:#d8c6c0; }
+.od-act .oac-b{ display:flex; flex-wrap:wrap; gap:9px; }
+.od-act button{ cursor:pointer; background:#160c09; color:#e2a595; border:1px solid var(--o-red-2); border-radius:2px;
+  font:inherit; font-size:10px; letter-spacing:.2em; text-transform:uppercase; padding:9px 14px 10px; }
+.od-act button.hold{ background:#0c141b; color:var(--o-acc); border-color:var(--o-acc-2); }
+.od-act button:hover:not(:disabled){ background:#1e100c; color:#f3c4b6; }
+.od-act button.hold:hover:not(:disabled){ background:#101d27; color:var(--o-white); }
+.od-act button:focus-visible{ outline:2px solid var(--o-acc); outline-offset:2px; }
+.od-act button:disabled{ cursor:default; opacity:.5; }
+.od-act .oac-log{ margin:15px 0 0; border-top:1px solid #3a1d15; padding-top:12px; font-size:11px; line-height:1.7; color:var(--o-dim); letter-spacing:.05em; }
+.od-act .oac-log b{ color:var(--o-ink); font-weight:400; }
+.od-act .oac-row{ display:block; }
+.od-act .oac-row + .oac-row{ margin-top:7px; }
+.od-act .oac-row i{ font-style:normal; color:var(--o-dimmer); font-variant-numeric:tabular-nums; }
 .od-hold{ margin:clamp(30px,10vh,110px) auto; max-width:580px; text-align:center; }
 .od-hold .odh-big{ color:var(--o-red); letter-spacing:.2em; text-transform:uppercase; font-size:14px; line-height:1.5; }
 .od-hold .odh-big.amber{ color:var(--o-amber); }
@@ -964,9 +1053,127 @@ html.lite .off-gate .og-shield{ animation:none; }
 @media print{
   #office,#offDoc{ display:none !important; }
 }
+/* =========================================================================
+   item 37 follow-up — THE OFFICE'S OWN 3D MARK
+   The Fourth Eye is built the same way as the brass plaque behind Archive Nine:
+   sixteen faces stacked four pixels apart, so at the same display size the two
+   marks carry the same thickness. The front face is the real symbol, so its rings
+   orbit and its core pulses exactly as they do before the Office terminal boots;
+   the fifteen behind it are the solid silhouette (#o5SealFlat), whose missing dots
+   let the front face read all the way through the stack.
+   ========================================================================= */
+.off-frame .off-bg{ position:absolute; inset:0; z-index:0; display:none; place-items:center; padding-bottom:8vh;
+  perspective:1400px; perspective-origin:50% 47%; pointer-events:none; opacity:.34; }
+body.mark-eye:not(.rec-open) .off-frame .off-bg{ display:grid; }
+.off-frame .off-bg .plogo{ position:relative; --mw:min(70vmin,740px); width:var(--mw); aspect-ratio:1/1;
+  --u:calc(var(--mw)/72);
+  transform-style:preserve-3d; animation:plogoSpin 46s linear infinite; will-change:transform; }
+#offDoc .od-bg{ position:absolute; inset:0; z-index:0; display:none; place-items:center;
+  perspective:1400px; perspective-origin:50% 47%; pointer-events:none; opacity:.2; }
+body.rec-open #offDoc .od-bg{ display:grid; }
+#offDoc .od-bg .plogo{ position:relative; --mw:min(88vmin,920px); width:var(--mw); aspect-ratio:1/1;
+  --u:calc(var(--mw)/72);
+  transform-style:preserve-3d; animation:plogoSpin 46s linear infinite; will-change:transform; }
+#offDoc .od-bar,#offDoc .od-body{ position:relative; z-index:1; }
+/* while the Office holds the screen its own mark is the ambient one; the brass plaque
+   behind it is covered by the terminal anyway, so it stops rendering */
+body.mark-eye #bg .plogo{ display:none; }
+html.lite .off-frame .off-bg .plogo,html.rm .off-frame .off-bg .plogo,
+html.lite #offDoc .od-bg .plogo,html.rm #offDoc .od-bg .plogo{ animation:none; transform:rotateX(13deg) rotateY(-34deg); }
+
+/* ---- the Fourth Eye, rebuilt as solid objects standing on a turning plaque.
+   The plaque itself stays a silhouette stack: a flat plaque turning edge-on and
+   thinning to a line is what a flat plaque does. Everything standing on it is a
+   solid. The core is one sphere, shaded like a sphere and carried by .o5unspin,
+   which turns it by the exact inverse of the plaque's spin, so it stays a ball at
+   every angle instead of being squashed flat as the plaque comes round. Both rings
+   are tori whose round cross-section is baked into the band, and the large inner
+   ring is tilted and rolls about the core the way a gyroscope does. The three dots
+   are spheres on a tilted orbit, straightened by the orbit's own inverse so they
+   keep facing the reader. Every length is in --u (one unit = the symbol's 72-unit
+   box), so the whole assembly scales wherever the mark is used. ---- */
+.o5mark{ position:absolute; inset:0; transform-style:preserve-3d; }
+.o5mark i{ position:absolute; left:50%; top:50%; display:block; border-radius:50%; transform-style:preserve-3d; }
+.o5mark .o5wrap{ position:absolute; inset:0; transform-style:preserve-3d; }
+.o5dotpos{ position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
+.o5dotf{ position:absolute; left:0; top:0; width:0; height:0; transform-style:preserve-3d;
+  animation:o5face 11s linear infinite; }
+.o5unspin{ position:absolute; inset:0; transform-style:preserve-3d; animation:o5unspin 46s linear infinite; }
+.o5halo{ animation:o5pulse 2.7s ease-in-out infinite;
+  background:radial-gradient(closest-side,rgba(142,194,222,.55),rgba(142,194,222,0) 76%); }
+.o5roll{ animation:o5roll 15s linear infinite; }
+.o5orb{ animation:o5orbit 11s linear infinite; }
+/* the ring rolls about the mark's own axis, so it is never caught edge-on: its tilt
+   direction sweeps round the core and the hoop reads as a hoop the whole way round */
+@keyframes o5roll{ from{ transform:rotateZ(0deg) rotateX(42deg); } to{ transform:rotateZ(360deg) rotateX(42deg); } }
+/* the three dots ride a tilted orbit that turns the other way, riding the same planes
+   as the hoop; .o5dotf carries the exact inverse so each dot keeps facing the reader */
+@keyframes o5orbit{ from{ transform:rotateZ(0deg) rotateX(-42deg); } to{ transform:rotateZ(-360deg) rotateX(-42deg); } }
+@keyframes o5face{ from{ transform:rotateX(42deg) rotateZ(0deg); } to{ transform:rotateX(42deg) rotateZ(360deg); } }
+/* the inverse of plogoSpin: anything round has to be turned back by the plaque's own
+   spin, or it would be flattened as the plaque comes round to edge-on */
+@keyframes o5unspin{ from{ transform:rotateY(0deg) rotateX(-13deg); } to{ transform:rotateY(-360deg) rotateX(-13deg); } }
+html.lite .o5roll,html.rm .o5roll{ animation:none; transform:rotateZ(28deg) rotateX(42deg); }
+html.lite .o5orb,html.rm .o5orb{ animation:none; transform:rotateZ(-24deg) rotateX(-42deg); }
+html.lite .o5dotf,html.rm .o5dotf{ animation:none; transform:rotateX(42deg) rotateZ(24deg); }
+html.lite .o5unspin,html.rm .o5unspin{ animation:none; transform:rotateY(34deg) rotateX(-13deg); }
+html.lite .o5halo,html.rm .o5halo{ animation:none; opacity:.85; }
+/* a real touch device holds the marks still, for the same reason the parallax stands
+   down there. A narrow desktop window is not a touch device, so it keeps turning. */
+@media (pointer:coarse){
+  #bg .plogo,.off-frame .off-bg .plogo,#offDoc .od-bg .plogo,#idle .idl-logo{
+    animation:none; transform:rotateX(13deg) rotateY(-34deg); }
+  .o5roll{ animation:none; transform:rotateZ(28deg) rotateX(42deg); }
+  .o5orb{ animation:none; transform:rotateZ(-24deg) rotateX(-42deg); }
+  .o5dotf{ animation:none; transform:rotateX(42deg) rotateZ(24deg); }
+  .o5unspin{ animation:none; transform:rotateY(34deg) rotateX(-13deg); }
+  .o5halo{ animation:none; opacity:.85; }
+}
+
+/* ---- item 44: reset session. The reader asked for a full restart, so that is literally
+   what the control does: the page reloads and starts again at the Office gate. ---- */
+.top #btnReset{ margin-left:2px; }
+.off-bar .ob-reset{ padding:5px 10px; font-size:9.5px; letter-spacing:.18em; }
+
+/* ---- item 45 · mobile: once a file is open, the background stops working. The ambient
+   marks, their breathing glow and the dust are pure decoration behind a document.
+   Gated on a genuinely coarse pointer rather than on width, so a narrow desktop window
+   still gets the turning mark the reader asked for. ---- */
+@media (max-width:720px) and (pointer:coarse){
+  body.revealed #bg .plogo,body.mark-eye #bg .plogo,
+  .off-frame .off-bg .plogo,#offDoc .od-bg .plogo{ animation:none; transform:rotateX(13deg) rotateY(-34deg); }
+  body.revealed #bg::after,body.mark-eye #bg::after{ animation:none; }
+  body.revealed #dust{ display:none; }
+}
+/* ---- item 46 · mobile: the terminal and the record fit the screen they are read on ---- */
+@media (max-width:640px){
+  #office{ font-size:11.5px; padding:4px; }
+  .off-bar{ flex-wrap:wrap; gap:9px; padding:7px 10px; }
+  .off-foot{ grid-template-columns:1fr; gap:5px; text-align:center; padding:7px 10px; }
+  .off-foot .of-prog{ max-width:150px; justify-self:center; }
+  .off-foot #offMeta,.off-foot .of-hint{ justify-self:center; }
+  .off-body{ padding:14px 12px 22px; }
+  .od-bar{ padding:7px 10px; gap:9px; }
+  .od-body{ padding:14px 12px 26px; }
+  .od-head .odh-t{ font-size:19px; }
+  .od-sec p,.od-sec li{ font-size:15px; }
+  .od-fold>summary{ letter-spacing:.12em; padding:10px 11px; }
+  .od-act .oac-b{ flex-direction:column; }
+  .od-act .oac-b button{ width:100%; }
+  .reader{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)); }
+}
+@media (max-width:400px){
+  #office{ font-size:11px; }
+  #boot{ font-size:10.5px; }
+}
+/* the fixed layers use the dynamic viewport height where the browser offers it, so the
+   terminal does not run under a phone's address bar */
+@supports (height:100dvh){
+  #office,#offDoc,#idle{ height:100dvh; }
+}
 </style>
 </head>
-<body>
+<body class="mark-eye">
 
 <!-- roundel symbol, reused everywhere -->
 <svg class="plogo-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
@@ -1015,6 +1222,30 @@ html.lite .off-gate .og-shield{ animation:none; }
       <circle cx="34.56" cy="30.1" r="2.7"/>
     </g>
   </svg>
+</symbol>
+<!-- the same Eye as a solid silhouette, for the extruded layers of the 3D mark: no glows,
+     no carved ring, and no dots — the holes stay holes, so the front face's dots read all
+     the way through the stack instead of lighting up every layer on the way down. -->
+<symbol id="o5SealFlat" viewBox="0 0 72 72">
+  <g transform="translate(36 36) scale(0.0756) translate(-500 -500)"
+     fill="none" stroke="currentColor" stroke-width="14" stroke-linejoin="round">
+    <path d="m 350,50 -31.22187,93.6656 a 400,400 0 0 0 -218.77786,356.33433 400,400 0 0 0 0.79427,21.22453 l -65.505568,73.87145 149.999998,259.80792 96.72742,-19.7936 a 400,400 0 0 0 217.98412,64.88955 400,400 0 0 0 217.9841,-64.88955 l 96.72745,19.7936 150,-259.80792 -65.5061,-73.87145 A 400,400 0 0 0 900,500 400,400 0 0 0 681.1295,143.38814 L 650,50 Z"/>
+  </g>
+  <svg x="9.71" y="9.71" width="52.57" height="52.57" viewBox="0 0 48 48" overflow="visible">
+    <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="6" opacity=".12"/>
+    <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2.4"/>
+    <circle cx="24" cy="24" r="8.6" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".55"/>
+    <circle cx="24" cy="24" r="6.4" fill="currentColor"/>
+  </svg>
+</symbol>
+<!-- the outer bracket alone, for the 3D mark's frame. The rings and the core are
+     solid geometry now, so the bracket is the one part still extruded, giving the
+     piece its backplate. -->
+<symbol id="o5Frame" viewBox="0 0 72 72">
+  <g transform="translate(36 36) scale(0.0756) translate(-500 -500)"
+     fill="none" stroke="currentColor" stroke-width="14" stroke-linejoin="round" opacity=".7">
+    <path d="m 350,50 -31.22187,93.6656 a 400,400 0 0 0 -218.77786,356.33433 400,400 0 0 0 0.79427,21.22453 l -65.505568,73.87145 149.999998,259.80792 96.72742,-19.7936 a 400,400 0 0 0 217.98412,64.88955 400,400 0 0 0 217.9841,-64.88955 l 96.72745,19.7936 150,-259.80792 -65.5061,-73.87145 A 400,400 0 0 0 900,500 400,400 0 0 0 681.1295,143.38814 L 650,50 Z"/>
+  </g>
 </symbol>
 <!-- soft halos for the Fourth Eye: no blur filters, so they cost nothing per frame.
      objectBoundingBox units => each halo is centred on its own circle. -->
@@ -1087,6 +1318,7 @@ html.lite .off-gate .og-shield{ animation:none; }
   <div class="spacer"></div>
   <button type="button" class="chip btn" id="btnContents" title="Table of contents">☰ Contents</button>
   <button type="button" class="chip btn" id="btnClose" title="Close the dossier folder">✕ Close</button>
+  <button type="button" class="chip btn" id="btnReset" title="Reset the session and start again at the Office gate">&#8635; Reset</button>
   <span class="chip label-extra">DOSSIER <b id="chipRef">O5CD-04</b></span>
   <span class="chip label-extra">REV <b id="chipRev">8</b></span>
 </header>
@@ -1119,6 +1351,94 @@ html.lite .off-gate .og-shield{ animation:none; }
   <div class="c-head"><span class="tag">▤ A.N. MARGINALIA</span><span class="who" id="cWho"></span><span class="when" id="cWhen"></span></div>
   <div class="c-body" id="cBody"></div>
   <div class="c-foot">click outside to dismiss</div>
+</div>
+
+<!-- =========================== item 37 · IDLE SCREENSAVER =========================== -->
+<div id="idle" class="amber" role="dialog" aria-modal="true" aria-label="Session idle" aria-hidden="true">
+  <div class="idl-stage" aria-hidden="true">
+    <div class="plogo idl-logo" id="idlScp">
+      <svg class="plogo-face" viewBox="0 0 1000 1000"><use href="#scpMark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-4px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-8px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-12px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-16px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-20px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-24px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-28px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-32px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-36px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-40px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-44px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-48px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-52px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-56px)"><use href="#scpMarkDark"/></svg>
+      <svg class="plogo-face" viewBox="0 0 1000 1000" style="transform:translateZ(-60px)"><use href="#scpMarkDark"/></svg>
+    </div>
+    <div class="plogo idl-logo" id="idlEye">
+      <!-- O5MARK:start · generated by gen-o5mark.py, do not hand-edit -->
+      <div class="o5mark">
+        <div class="o5wrap">
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#9ecfea;transform:translateZ(0)"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-0.68))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-1.36))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.04))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.72))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-3.4))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-4.08))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-4.76))"><use href="#o5Frame"/></svg>
+          <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-5.44))"><use href="#o5Frame"/></svg>
+        </div>
+        <div class="o5wrap" style="transform:translateZ(calc(var(--u)*-7.2))">
+          <div class="o5unspin">
+            <i class="o5halo" style="width:calc(var(--u)*21);height:calc(var(--u)*21);margin:calc(var(--u)*-10.5) 0 0 calc(var(--u)*-10.5)"></i>
+          </div>
+        </div>
+        <div class="o5wrap">
+          <i style="width:calc(var(--u)*16.4);height:calc(var(--u)*16.4);margin:calc(var(--u)*-8.2) 0 0 calc(var(--u)*-8.2);background:radial-gradient(closest-side,rgba(0,0,0,0) 87.8049%,#172e3c 87.8049%,#6596b3 89.3293%,#94c6e0 90.8537%,#aed6eb 92.378%,#b6dcee 93.9024%,#aed6eb 95.4268%,#94c6e0 96.9512%,#6596b3 98.4756%,#172e3c 100%)"></i>
+        </div>
+        <div class="o5wrap">
+          <div class="o5unspin">
+            <i style="width:calc(var(--u)*13.2);height:calc(var(--u)*13.2);margin:calc(var(--u)*-6.6) 0 0 calc(var(--u)*-6.6);background:radial-gradient(circle calc(var(--u)*10.56) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+          </div>
+        </div>
+        <div class="o5wrap o5roll">
+          <i style="width:calc(var(--u)*48.7);height:calc(var(--u)*48.7);margin:calc(var(--u)*-24.35) 0 0 calc(var(--u)*-24.35);background:radial-gradient(closest-side,rgba(0,0,0,0) 88.9117%,#172e3c 88.9117%,#6596b3 90.2977%,#94c6e0 91.6838%,#aed6eb 93.0698%,#b6dcee 94.4559%,#aed6eb 95.8419%,#94c6e0 97.2279%,#6596b3 98.614%,#172e3c 100%)"></i>
+        </div>
+        <div class="o5wrap o5orb">
+          <div class="o5dotpos" style="transform:translate(0,calc(var(--u)*-14.5))">
+            <div class="o5dotf">
+              <div class="o5unspin">
+                <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+              </div>
+            </div>
+          </div>
+          <div class="o5dotpos" style="transform:translate(calc(var(--u)*12.5574),calc(var(--u)*7.25))">
+            <div class="o5dotf">
+              <div class="o5unspin">
+                <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+              </div>
+            </div>
+          </div>
+          <div class="o5dotpos" style="transform:translate(calc(var(--u)*-12.5574),calc(var(--u)*7.25))">
+            <div class="o5dotf">
+              <div class="o5unspin">
+                <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- O5MARK:end -->
+</div>
+  </div>
+  <div class="idl-in">
+    <div class="idl-t" id="idlT">SESSION IDLE</div>
+    <div class="idl-s" id="idlS">Archive Nine · internal circulation</div>
+    <button type="button" class="idl-b" id="idlBtn">&gt; PRESS TO RETURN TO FILE &lt;</button>
+  </div>
 </div>
 
 <!-- =========================== FOLDER (open animation) =========================== -->
@@ -1163,10 +1483,73 @@ html.lite .off-gate .og-shield{ animation:none; }
 <!-- =========================== OFFICE OF THE 4TH — SECURE TERMINAL =========================== -->
 <div id="office" aria-hidden="false">
   <div class="off-frame">
+    <!-- the Fourth Eye, extruded and turning, as the terminal's own ambient mark -->
+    <div class="off-bg" aria-hidden="true">
+      <div class="plogo" id="ogEye">
+        <!-- O5MARK:start · generated by gen-o5mark.py, do not hand-edit -->
+        <div class="o5mark">
+          <div class="o5wrap">
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#9ecfea;transform:translateZ(0)"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-0.68))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-1.36))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.04))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.72))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-3.4))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-4.08))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-4.76))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-5.44))"><use href="#o5Frame"/></svg>
+          </div>
+          <div class="o5wrap" style="transform:translateZ(calc(var(--u)*-7.2))">
+            <div class="o5unspin">
+              <i class="o5halo" style="width:calc(var(--u)*21);height:calc(var(--u)*21);margin:calc(var(--u)*-10.5) 0 0 calc(var(--u)*-10.5)"></i>
+            </div>
+          </div>
+          <div class="o5wrap">
+            <i style="width:calc(var(--u)*16.4);height:calc(var(--u)*16.4);margin:calc(var(--u)*-8.2) 0 0 calc(var(--u)*-8.2);background:radial-gradient(closest-side,rgba(0,0,0,0) 87.8049%,#172e3c 87.8049%,#6596b3 89.3293%,#94c6e0 90.8537%,#aed6eb 92.378%,#b6dcee 93.9024%,#aed6eb 95.4268%,#94c6e0 96.9512%,#6596b3 98.4756%,#172e3c 100%)"></i>
+          </div>
+          <div class="o5wrap">
+            <div class="o5unspin">
+              <i style="width:calc(var(--u)*13.2);height:calc(var(--u)*13.2);margin:calc(var(--u)*-6.6) 0 0 calc(var(--u)*-6.6);background:radial-gradient(circle calc(var(--u)*10.56) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+            </div>
+          </div>
+          <div class="o5wrap o5roll">
+            <i style="width:calc(var(--u)*48.7);height:calc(var(--u)*48.7);margin:calc(var(--u)*-24.35) 0 0 calc(var(--u)*-24.35);background:radial-gradient(closest-side,rgba(0,0,0,0) 88.9117%,#172e3c 88.9117%,#6596b3 90.2977%,#94c6e0 91.6838%,#aed6eb 93.0698%,#b6dcee 94.4559%,#aed6eb 95.8419%,#94c6e0 97.2279%,#6596b3 98.614%,#172e3c 100%)"></i>
+          </div>
+          <div class="o5wrap o5orb">
+            <div class="o5dotpos" style="transform:translate(0,calc(var(--u)*-14.5))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+            <div class="o5dotpos" style="transform:translate(calc(var(--u)*12.5574),calc(var(--u)*7.25))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+            <div class="o5dotpos" style="transform:translate(calc(var(--u)*-12.5574),calc(var(--u)*7.25))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- O5MARK:end -->
+</div>
+    </div>
     <header class="off-bar">
       <button type="button" class="ret off-back" id="offArchBack" title="Return to the gate">&#8592; Return to gate</button>
       <span class="ob-c" id="offStep">STANDBY</span>
       <span class="ob-r" id="offClock">--:--:--</span>
+      <button type="button" class="ret ob-reset" id="offReset" title="Reset the session and start again at the gate">&#8635; Reset</button>
     </header>
     <div class="off-body center" id="offBody" role="region" aria-live="polite" aria-label="Office of the Fourth secure terminal"></div>
     <footer class="off-foot">
@@ -1179,6 +1562,65 @@ html.lite .off-gate .og-shield{ animation:none; }
 
 <!-- =========================== OFFICE DOCUMENT VIEWER =========================== -->
 <div id="offDoc" role="dialog" aria-modal="true" aria-label="Office of the Fourth restricted record">
+  <!-- the same extruded Fourth Eye, dim, behind the record that is open on it -->
+  <div class="od-bg" aria-hidden="true">
+    <div class="plogo" id="odEye">
+        <!-- O5MARK:start · generated by gen-o5mark.py, do not hand-edit -->
+        <div class="o5mark">
+          <div class="o5wrap">
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#9ecfea;transform:translateZ(0)"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-0.68))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-1.36))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.04))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-2.72))"><use href="#o5Frame"/></svg>
+            <svg class="plogo-face" viewBox="0 0 72 72" style="color:#0c141b;transform:translateZ(calc(var(--u)*-3.4))"><use href="#o5Frame"/></svg>
+          </div>
+          <div class="o5wrap" style="transform:translateZ(calc(var(--u)*-7.2))">
+            <div class="o5unspin">
+              <i class="o5halo" style="width:calc(var(--u)*21);height:calc(var(--u)*21);margin:calc(var(--u)*-10.5) 0 0 calc(var(--u)*-10.5)"></i>
+            </div>
+          </div>
+          <div class="o5wrap">
+            <i style="width:calc(var(--u)*16.4);height:calc(var(--u)*16.4);margin:calc(var(--u)*-8.2) 0 0 calc(var(--u)*-8.2);background:radial-gradient(closest-side,rgba(0,0,0,0) 87.8049%,#172e3c 87.8049%,#6596b3 89.3293%,#94c6e0 90.8537%,#aed6eb 92.378%,#b6dcee 93.9024%,#aed6eb 95.4268%,#94c6e0 96.9512%,#6596b3 98.4756%,#172e3c 100%)"></i>
+          </div>
+          <div class="o5wrap">
+            <div class="o5unspin">
+              <i style="width:calc(var(--u)*13.2);height:calc(var(--u)*13.2);margin:calc(var(--u)*-6.6) 0 0 calc(var(--u)*-6.6);background:radial-gradient(circle calc(var(--u)*10.56) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+            </div>
+          </div>
+          <div class="o5wrap o5roll">
+            <i style="width:calc(var(--u)*48.7);height:calc(var(--u)*48.7);margin:calc(var(--u)*-24.35) 0 0 calc(var(--u)*-24.35);background:radial-gradient(closest-side,rgba(0,0,0,0) 88.9117%,#172e3c 88.9117%,#6596b3 90.2977%,#94c6e0 91.6838%,#aed6eb 93.0698%,#b6dcee 94.4559%,#aed6eb 95.8419%,#94c6e0 97.2279%,#6596b3 98.614%,#172e3c 100%)"></i>
+          </div>
+          <div class="o5wrap o5orb">
+            <div class="o5dotpos" style="transform:translate(0,calc(var(--u)*-14.5))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+            <div class="o5dotpos" style="transform:translate(calc(var(--u)*12.5574),calc(var(--u)*7.25))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+            <div class="o5dotpos" style="transform:translate(calc(var(--u)*-12.5574),calc(var(--u)*7.25))">
+              <div class="o5dotf">
+                <div class="o5unspin">
+                  <i style="width:calc(var(--u)*6.21);height:calc(var(--u)*6.21);margin:calc(var(--u)*-3.105) 0 0 calc(var(--u)*-3.105);background:radial-gradient(closest-side,rgba(238,245,249,.5),rgba(238,245,249,0) 74%)"></i>
+                  <i style="width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);margin:calc(var(--u)*-2.3) 0 0 calc(var(--u)*-2.3);background:radial-gradient(circle calc(var(--u)*3.68) at 32% 26%,#eef8ff 0%,#ddf0fb 18.75%,#b6dcee 37.5%,#87bad6 56.25%,#4d7c9a 75%,#2e5369 87.5%,#1f3c4e 93.75%,#0c1a23 100%)"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- O5MARK:end -->
+</div>
+  </div>
   <div class="od-bar">
     <button type="button" class="od-back" id="offDocBack">&#8592; Return to archive</button>
 </div>
@@ -1427,6 +1869,12 @@ window.AN_CONTENT = {
   function ul(a){ return '<ul>' + a.join('') + '</ul>'; }
   function sec(t, parts){ return '<section class="od-sec"><h2>' + t + '</h2>' + parts.join('') + '</section>'; }
   function red(n){ var s = '', i; for(i = 0; i < n; i++) s += '\u2588'; return '<span class="od-bars">' + s + '</span>'; }
+  /* item 36: an annex the reader presses open, and a plain register table to sit inside one */
+  function fold(t, parts){ return '<details class="od-fold"><summary>' + t + '</summary><div class="odf">' + parts.join('') + '</div></details>'; }
+  function tab(head, rows){
+    return '<table class="od-tab"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>'
+      + rows.join('') + '</tbody></table>';
+  }
   var RD = red(6);
 
   window.AN_OFFICE = {
@@ -1449,7 +1897,8 @@ window.AN_CONTENT = {
     + '</dl>'
     + sec('Executive Summary', [
         p('The Office of the Fourth opened this record to answer a single question: who is Archive Nine? The Group holds no charter this Office has recognised, is registered with no authority we can reach, and maintains a standing interest in this seat and in ' + red(2) + ' other Council seats. It has been reported operating, more than once, inside facilities it should not have been able to enter.'),
-        p('We have not identified them. Not a member, not a founder, not a funding line, not one verifiable address. Every line of inquiry has returned the same shape: material written as though by an organisation that knows us, held by an organisation we cannot find. The reason we have been unable to identify them is not known to this Office and is under continued investigation. Until it is resolved, no action to locate, seize, or terminate the Group will be authorised.')
+        p('We have not identified them. Not a member, not a founder, not a funding line, not one verifiable address. Every line of inquiry has returned the same shape: material written as though by an organisation that knows us, held by an organisation we cannot find. The reason we have been unable to identify them is not known to this Office and is under continued investigation. Until it is resolved, no action to locate, seize, or terminate the Group will be authorised.'),
+        p('Every account traced to the Group resolves to a cover name and stops there. The accounts, and the names on them, are set out in Annex A. Not one of those names corresponds to a person, a place, or a record of any kind, and none of them can be made to. Until one of them can be established as a real identity, the Group cannot be named \u2014 and what cannot be named cannot be terminated.')
       ])
     + sec('I. Subject of Interest', [
         ul([
@@ -1487,7 +1936,64 @@ window.AN_CONTENT = {
         ])
       ])
     + '<div class="od-note"><b>Held at the Office of the Fourth.</b> This record is not circulated, and is not to be acknowledged outside this clearance.</div>'
-    + '<div class="od-sign"><b>Authorised \u00b7 O5-4</b><br>Office of the Fourth \u00b7 O5 EYES ONLY \u00b7 logged to RAISA<br>The reason for the Group\u2019s resistance to identification is not known to this Office and remains under investigation.</div>',
+    + '<div class="od-sign"><b>Authorised \u00b7 O5-4</b><br>Office of the Fourth \u00b7 O5 EYES ONLY \u00b7 logged to RAISA<br>The reason for the Group\u2019s resistance to identification is not known to this Office and remains under investigation.</div>'
+    + '<div class="od-annex">'
+    +   '<div class="oda-cap">Annexes \u00b7 press to open</div>'
+    +   fold('Annex A \u00b7 Accounts and cover names', [
+          p('Six accounts, across four services, have been attributed to the Group with confidence. Each was opened with documentation that matches no person on record, and each holds a cover name in place of a name. The names are given below exactly as the account records hold them.'),
+          tab(['Account', 'Name held on the account', 'Resolves to'], [
+            '<tr><td>' + red(4) + '\u2013A1</td><td>\u201cR.\u201d</td><td class="neg">nothing on record</td></tr>',
+            '<tr><td>' + red(4) + '\u2013A2</td><td>\u201cR.\u201d</td><td class="neg">nothing on record</td></tr>',
+            '<tr><td>' + red(4) + '\u2013A3</td><td>\u201cV.\u201d</td><td class="neg">nothing on record</td></tr>',
+            '<tr><td>' + red(4) + '\u2013A4</td><td>\u201cV.\u201d</td><td class="neg">nothing on record</td></tr>',
+            '<tr><td>' + red(4) + '\u2013A5</td><td>\u201cK.\u201d</td><td class="neg">nothing on record</td></tr>',
+            '<tr><td>' + red(4) + '\u2013A6</td><td class="neg">no name held</td><td class="neg">nothing on record</td></tr>'
+          ]),
+          p('Not one of the six returns a birth record, an address, a place of work, a tax reference, a next of kin, or any activity of any kind after the account was opened. Three name correspondence addresses that were closed before the accounts were opened. Two share a name. The documentation underlying four of them was issued by offices that hold no record of issuing it.'),
+          p('An initial \u2014 and nothing further \u2014 is all that six accounts, four services and two jurisdictions between them will give up. The form is not accidental: it is the same form the Group uses on its own recovered material, where a note is signed with an initial, sometimes with a function beside it, and never with a name.'),
+          p('<b>This is the obstacle, and it is the whole of it.</b> The Group leaves behind exactly enough to prove that it is real and exactly little enough to prove that no member is. Six accounts remain under standing observation. The Office holds the originals.'),
+          p('<b>That is why no terminal action has been taken.</b> It is not restraint, and it is not a decision this Office has chosen not to make. There is no member to name, and so there is no target to designate.')
+        ])
+    +   fold('Annex B \u00b7 Chronology of attempts', [
+          p('Attempts are recorded in the order in which they were opened. None has been closed by a result; each was closed as unproductive and reopened under the standing authority in \u00a7V.'),
+          ul([
+            li('<b>Phase one \u00b7 registry.</b> Cross-matching of the Group\u2019s name and its material against the registries of ' + red(3) + ' jurisdictions, in every spelling recovered. Nil.'),
+            li('<b>Phase two \u00b7 signals.</b> Traffic attributed to the Group: none found. The material moves in physical form and leaves nothing in transit.'),
+            li('<b>Phase three \u00b7 sites.</b> Four addresses attributed to the Group were observed. Two had never been occupied. One was occupied and emptied before entry. One was a place of business whose tenant had left no forwarding arrangement and no one who knew them.'),
+            li('<b>Phase four \u00b7 persons.</b> ' + red(2) + ' persons claiming to have dealt with the Group were interviewed. Their accounts agree on nothing except the Group\u2019s name and the material it holds.'),
+            li('<b>Phase five \u00b7 accounts</b> (current). Six accounts, four services, five names between them. Nothing behind any of them. See Annex A.')
+          ]),
+          p('The pattern does not change with the phase. Every method returns material that is internally consistent and externally unattributable, and the leads, such as they are, do not converge on anything.')
+        ])
+    +   fold('Annex C \u00b7 Material held', [
+          ul([
+            li('Two access manifests. Both carry this seat\u2019s designation. Neither carries a name. Their provenance is unestablished.'),
+            li('One fragment of Group material. It names a body it calls the \u201cOffice of Records Integrity\u201d, which is a cover of this Office. The fragment is held unverified, and is not to be treated as known to the Group.'),
+            li('Copies of three dossiers attributed to the Group, concerning subjects of this Council. The detail they carry is not recorded anywhere this Office can locate.'),
+            li('Six account records (Annex A). Originals retained.'),
+            li('The item the Group calls \u201cThe Stopped Watch\u201d: <b>not recovered</b>. Every mention of it in our material is second-hand. This Office has not held it, and offers no assessment of its function.')
+          ]),
+          p('No recovered item carries a maker\u2019s mark, a serial, a printer signature, or any other means of tracing it back to a source. The material is clean in a way that requires effort to achieve.')
+        ])
+    +   fold('Annex D \u00b7 Questions this record does not answer', [
+          ul([
+            li('How the Group obtained knowledge held at O5 level. No leak has been identified, and the material is older than the seat it concerns.'),
+            li('Why the Group watches this seat. \u00a7IV records that this seat\u2019s interest in the matter is not solely institutional; the grounds for that interest are recorded at the level of the seat and are deliberately not entered here.'),
+            li('Whether the Group has a founder, an instrument, or any internal order. Its material is written as though it has all three.'),
+            li('What completes the Group\u2019s work, if anything. Nothing recovered states a purpose, a demand, or a conclusion.')
+          ]),
+          p('These questions are open. They are not to be answered by inference, and no action taken in respect of the Group is to assume an answer.')
+        ])
+    + '</div>'
+    + '<div class="od-act" id="odAct">'
+    +   '<div class="oac-h">\u26a0 terminal action \u00b7 authorisation required</div>'
+    +   '<p class="oac-t">No terminal action is authorised by this record, and none may be taken on its authority alone. An entry made here is recorded against the seat of the Fourth, entered in this file, and logged to RAISA. It releases planning only: nothing may be executed while identification is unresolved.</p>'
+    +   '<div class="oac-b">'
+    +     '<button type="button" data-oa="authorise">Authorise terminal action</button>'
+    +     '<button type="button" class="hold" data-oa="hold">Hold \u00b7 no action</button>'
+    +   '</div>'
+    +   '<div class="oac-log" id="oacLog" hidden></div>'
+    + '</div>',
 
     /* sealed record 1 — O5-4's personal notes (content not yet compiled) */
     notes:
@@ -1533,6 +2039,7 @@ function reducedMotion(){
    (spinning 3D mark, drifting scanline, dust) and composite the full-screen grain/CRT overlays
    plainly, and play the boot/open sequences a little faster. A capable machine keeps everything. */
 var LITE = false;
+var TOUCH = !!(window.matchMedia && window.matchMedia("(pointer:coarse)").matches);
 function setLite(){ if(LITE) return; LITE = true; document.documentElement.classList.add("lite"); }
 function isLite(){ return LITE || document.documentElement.classList.contains("lite"); }
 function initPerfTier(){
@@ -2279,7 +2786,7 @@ function chSealed(r){ return !!r && r.getAttribute("data-kind") === "sealed"; }
 /* item 12: a sealed record is denied; a brief CRT screen puts the attempt on record */
 function chRaisa(){
   fileScreen("Unauthorised access attempt recorded · logged to RAISA", 1600, null, null);
-  Sound.deny();
+  Sound.deny(1);
 }
 /* item 16: the workstation clock on the archive screen */
 function chClock(){
@@ -2450,7 +2957,15 @@ var Sound = (function(){
     });
     return PB[id];
   }
-  function preload(){ if(!ensure()) return; load("key"); load("mouse"); load("sigh"); load("room"); load("dammit"); }
+  /* item 41: on a weak device only the two transient hits are decoded up front. The voice
+     clips and the room bed are decoded the first time a scene actually asks for them, and
+     every voice in this file stands on its own if the decode never happens. */
+  function preload(){
+    if(!ensure()) return;
+    load("key"); load("mouse");
+    if(isLite()) return;
+    load("sigh"); load("room"); load("dammit");
+  }
   /* one recorded hit, under the synthesised layer, into the terminal's own filter chain */
   function hit(id, gain, rate){
     if(!ensure()) return;
@@ -2463,6 +2978,9 @@ var Sound = (function(){
   /* the room she is actually sitting in, measured off the recording, played under everything */
   function room(on){
     if(!ensure()) return;
+    /* item 41: the bed is the only looping recording in the file, and on a weak device a
+       loop is the most expensive thing on the page. Lite plays the scene without it. */
+    if(on && isLite()) return;
     if(on){
       roomWant = true;
       if(roomStop) clearTimeout(roomStop);
@@ -2691,7 +3209,10 @@ var Sound = (function(){
     sigh:function(){ whir(0.95, 430, 150, 0.02, 1.6); voice("sine", 132, 0.8, 0.010, 92); },
     press:function(){
       api._pressed = true;
-      if(realOn) hit("mouse", REAL_MOUSE * (0.78 + Math.random() * 0.44), 0.92 + Math.random() * 0.18);
+      /* item 38: the recorded mouse click is layered into BOTH terminals. Which terminal is
+         speaking decides the keys and the room, not the mouse — the Group's terminal keeps
+         its own clack underneath the recording, exactly as the Office's does. */
+      hit("mouse", REAL_MOUSE * (0.78 + Math.random() * 0.44), 0.92 + Math.random() * 0.18);
       clack(0.05, 205 + Math.random() * 70, 6);
     },
     /* A contents row answers the pointer before it is pressed: a low, quiet thud.
@@ -2704,7 +3225,28 @@ var Sound = (function(){
     scan:function(){ whir(0.72, 300, 1480, 0.02, 2.2); voice("sine", 470, 0.6, 0.008, 1180); },
     secure:function(){ voice("square", 660, 0.06, 0.02, null, 5);
       setTimeout(function(){ if(!api._done) voice("square", 990, 0.09, 0.018, null, -4); }, 92); },
-    deny:function(){ buzz(178, 0.16, 0.032); setTimeout(function(){ if(!api._done) buzz(88, 0.42, 0.036); }, 150); },
+    /* item 39: a denial sounds like the step it interrupted, not like the terminal in
+       general. 1 — a sealed record refused at a chooser (either terminal); 2 — security
+       credentials rejected at the Office; 3 — a biometric check refused. Each is its own
+       pair of buzzes: pitch, length, then the lower tail that follows it. */
+    deny:function(step){
+      var p = {
+        1: [178, 0.16, 88, 0.42],
+        2: [150, 0.21, 72, 0.54],
+        3: [196, 0.14, 118, 0.32]
+      }[step] || [178, 0.16, 88, 0.42];
+      buzz(p[0], p[1], 0.032);
+      setTimeout(function(){ if(!api._done) buzz(p[2], p[3], 0.036); }, 150);
+    },
+    /* item 40: a chair taking weight. Office-only, synthesised rather than recorded — a low
+       wooden groan, then two stick-slips as the frame settles. */
+    creak:function(){
+      if(!ensure()) return; var t = ctx.currentTime;
+      voice("sawtooth", 84, 0.62, 0.011, 58);
+      burst(0.015, 430, 0.7, 0.5, 300);
+      setTimeout(function(){ if(!api._done){ voice("triangle", 206, 0.13, 0.006, 158); burst(0.019, 880, 2.2, 0.16, 520); } }, 175);
+      setTimeout(function(){ if(!api._done){ burst(0.013, 1230, 3, 0.11, 700); } }, 372);
+    },
     /* paper: lift + rustle + settle, synced loosely to the turn animation */
     turn:function(dir){
       whir(0.22, dir > 0 ? 700 : 1000, dir > 0 ? 2400 : 1800, 0.016, 1.5);
@@ -3122,6 +3664,94 @@ function initGlitch(){
   var html = document.documentElement;
   (function loop(){ setTimeout(function(){ html.classList.add("glitch"); setTimeout(function(){ html.classList.remove("glitch"); }, 200); loop(); }, 7000 + Math.random() * 9000); })();
 }
+/* ------------------------------------------------------------- item 37: idle screensaver
+   After IDLE_MS without input, an open document fades into the SCP-logo background: the
+   Office's blue for its own records, Archive Nine's amber for the dossier. Movement does
+   not clear it — the reader comes back to the file through the text control, which is what
+   an auto-lock is for. The document underneath is never touched, so the return lands on
+   the page that was being read. ---------------------------------------------------------- */
+(function(){
+  var IDLE_MS = 60000;
+  var box = document.getElementById("idle");
+  var btn = document.getElementById("idlBtn");
+  var tEl = document.getElementById("idlT");
+  var sEl = document.getElementById("idlS");
+  if(!box || !btn || !tEl || !sEl) return;
+
+  var timer = null, showing = false, back = null;
+
+  function officeOpen(){
+    var d = document.getElementById("offDoc");
+    return !!(d && d.classList.contains("show"));
+  }
+  function dossierOpen(){
+    return document.body.classList.contains("revealed") && !officeOpen();
+  }
+  function themeNow(){
+    if(officeOpen()) return { cls:"blue", t:"RECORD OPEN \u00b7 SESSION IDLE", s:"office of the fourth \u00b7 O5 EYES ONLY" };
+    if(dossierOpen()) return { cls:"amber", t:"FILE OPEN \u00b7 SESSION IDLE", s:"archive nine \u00b7 internal circulation" };
+    return null;
+  }
+  function arm(){
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(function(){
+      timer = null;
+      if(showing) return;
+      var th = themeNow();
+      if(!th){ arm(); return; }
+      back = document.activeElement;
+      showing = true;
+      box.className = th.cls;
+      tEl.textContent = th.t;
+      sEl.textContent = th.s;
+      /* the ambient marks behind the lock screen stand down (CSS: html.idle-up) */
+      document.documentElement.classList.add("idle-up");
+      box.classList.add("on");
+      box.setAttribute("aria-hidden", "false");
+      void box.offsetWidth;
+      box.classList.add("vis");
+      try{ btn.focus({ preventScroll:true }); }catch(e){ btn.focus(); }
+    }, IDLE_MS);
+  }
+  function wake(){
+    if(!showing) return;
+    showing = false;
+    box.classList.remove("vis");
+    document.documentElement.classList.remove("idle-up");
+    box.setAttribute("aria-hidden", "true");
+    setTimeout(function(){ if(!showing) box.classList.remove("on"); }, 950);
+    if(back && back.focus){ try{ back.focus({ preventScroll:true }); }catch(e){ back.focus(); } }
+    back = null;
+    arm();
+  }
+
+  btn.addEventListener("click", wake);
+  box.addEventListener("keydown", function(ev){ if(ev.key === "Escape"){ ev.stopPropagation(); wake(); } });
+  ["pointerdown","pointermove","wheel","keydown","touchstart"].forEach(function(name){
+    window.addEventListener(name, function(ev){
+      /* while the screensaver is up, only the control (or Escape) brings the file back */
+      if(showing){
+        if(ev && ev.type === "keydown" && ev.key !== "Escape" && ev.target === btn) return;   /* Enter/Space on the control */
+        return;
+      }
+      arm();
+    }, { passive:true });
+  });
+  arm();
+})();
+/* ------------------------------------- item 44: reset session, from either terminal
+   A full restart of the whole scene: the reader lands back at the Office gate exactly as
+   if the page had been reloaded, which is what "reset" means on a terminal like this. */
+(function(){
+  function reset(){
+    try{ location.reload(); }
+    catch(e){ location.href = location.href; }
+  }
+  ["btnReset","offReset"].forEach(function(id){
+    var b = document.getElementById(id);
+    if(b) b.addEventListener("click", reset);
+  });
+})();
 /* ------------------------------------------------------------- atmosphere */
 function initAtmosphere(){
   if(reducedMotion()) return;
@@ -3147,6 +3777,8 @@ function initAtmosphere(){
     var raf = 0, mx = 0, my = 0;
     window.addEventListener("mousemove", function(ev){
       if(LITE) return;
+      /* item 45: a real touch device does not drift anything behind a document being read */
+      if(TOUCH && document.body.classList.contains("revealed")) return;
       mx = ev.clientX / window.innerWidth - .5;
       my = ev.clientY / window.innerHeight - .5;
       if(raf) return;
@@ -3198,8 +3830,13 @@ function officeBoot(){
     /* item 9: the Office opens a record through the same black CRT screen as the Group */
     function showIt(){
       docBody.innerHTML = d[which] || '<div class="od-hold"><div class="odh-big">record unavailable</div></div>';
+      /* item 35: a decision already entered in this session is shown in the record, not lost */
+      paintAction();
 
       docEl.classList.add("show"); docEl.setAttribute("aria-hidden", "false");
+      /* item 37 follow-up: the archive behind the record stands down, so the terminal's
+         ambient mark reads around the open document instead of being covered by it */
+      document.body.classList.add("rec-open");
       if(docScroll) docScroll.scrollTop = 0;
       Sound.open();
       var bk = document.getElementById("offDocBack");
@@ -3212,7 +3849,12 @@ function officeBoot(){
   }
   function closeDoc(){
     function after(){
+      /* move focus off the document before hiding it: setting aria-hidden on the ancestor
+         of the focused element is refused by browsers and warns */
+      var ae = document.activeElement;
+      if(ae && docEl.contains(ae) && ae.blur) ae.blur();
       docEl.classList.remove("show"); docEl.setAttribute("aria-hidden", "true"); Sound.close();
+      document.body.classList.remove("rec-open");
       /* a record opened through clearance leaves the clearance log behind: return to the archive */
       if(docFromClearance){ docFromClearance = false; showFolder(true); }
     }
@@ -3223,6 +3865,55 @@ function officeBoot(){
   var docBack = document.getElementById("offDocBack");
   if(docBack) docBack.addEventListener("click", closeDoc);
   document.addEventListener("keydown", function(ev){ if(ev.key === "Escape" && docEl.classList.contains("show")) closeDoc(); });
+
+  /* ---- item 35: the authorisation block at the end of the Office's record ----
+     Pressing either control writes an entry into the record itself and logs it to RAISA.
+     The entry is held for the session, so reopening the record shows what was recorded
+     rather than offering the same choice again as though nothing had been entered. */
+  var offAction = null;
+  function offStamp(){
+    var d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + " " + clockNow();
+  }
+  function paintAction(){
+    var box = docBody && docBody.querySelector("#odAct"); if(!box) return;
+    var log = box.querySelector("#oacLog");
+    var btns = box.querySelectorAll("[data-oa]"), i;
+    if(!offAction){
+      if(log){ log.hidden = true; log.innerHTML = ""; }
+      for(i = 0; i < btns.length; i++) btns[i].disabled = false;
+      return;
+    }
+    for(i = 0; i < btns.length; i++){
+      var b = btns[i];
+      if(b.getAttribute("data-oa") === offAction.kind) b.setAttribute("aria-pressed", "true");
+      b.disabled = true;
+    }
+    if(log){ log.hidden = false; log.innerHTML = offAction.html; }
+  }
+  function offActionRun(kind){
+    var stamp = offStamp();
+    var line = kind === "authorise"
+      ? '<b>AUTHORISED</b> \u00b7 terminal action against ' + bars(6) + ' released for planning. Nothing may be executed while identification is unresolved. Entered by O5-4 and logged to RAISA.'
+      : '<b>HELD</b> \u00b7 no terminal action authorised. Standing observation and identification attempts sustained under \u00a7V. Entered by O5-4 and logged to RAISA.';
+    var tail = kind === "authorise"
+      ? 'Authority: the seat of the Fourth alone. Review: on identification, or at the next revision of this record.'
+      : 'Authority: standing. Review: at the next revision of this record.';
+    offAction = {
+      kind: kind,
+      html: '<span class="oac-row"><i>' + stamp + '</i> \u00b7 ' + line + '</span>'
+          + '<span class="oac-row"><i>RAISA</i> \u00b7 ' + tail + '</span>'
+    };
+    paintAction();
+    fileScreen(kind === "authorise"
+      ? "ENTERING AUTHORISATION \u00b7 LOGGED TO RAISA\u2026"
+      : "RECORDING HOLD \u00b7 LOGGED TO RAISA\u2026", 1500, null, null);
+  }
+  if(docBody) docBody.addEventListener("click", function(ev){
+    var b = (ev.target && ev.target.closest) ? ev.target.closest("[data-oa]") : null;
+    if(!b || b.disabled) return;
+    offActionRun(b.getAttribute("data-oa"));
+  });
 
   /* ---- the archive's return control: up only while the archive is, and it goes back to the gate ---- */
   function archBack(on){ if(root) root.classList.toggle("arch", !!on); if(!on) chClockStop(); }
@@ -3274,6 +3965,7 @@ function officeBoot(){
     {p:"line", s:"      operator     O5-4", c:"acc"},
     {p:"line", s:"      clearance    LEVEL 5 \u00b7 O5 \u00b7 RAISA", c:"dim"},
     {p:"sound", s:"sigh"},
+    {p:"sound", s:"creak"},
     {p:"step", s:"BIOMETRIC"},
     {p:"prog", v:38},
     {p:"spin", label:"fingerprint", tail:"peripheral 1", dur:760, done:"[ ok ] match"},
@@ -3460,6 +4152,8 @@ function officeBoot(){
     Sound.secure();
     hold(1300, function(){
       root.classList.add("gone");
+      /* the Office is leaving the screen: hand the ambient mark back to Archive Nine */
+      document.body.classList.remove("mark-eye");
       hold(1000, function(){
         root.style.display = "none"; root.setAttribute("aria-hidden", "true");
         if(bootEl) bootEl.classList.remove("off-hold");
@@ -3548,7 +4242,7 @@ function officeBoot(){
       dots(l1.querySelector("[data-dots]"), 17, function(){
         if(!fumbles){ prog.style.width = "26%"; return accept(); }
         cl('<span class="ocl-bad">_login failed</span>');
-        Sound.deny();
+        Sound.deny(2);
         hold(560, function(){
           Sound.clip("sigh").then(function(){          /* she reacts ÔÇö a real recording, not a machine */
             hold(460, function(){
@@ -3569,7 +4263,7 @@ function officeBoot(){
     function step3(){                                  /* 3 ÔÇö fingerprint */
       head(3, "biometric \u00b7 fingerprint");
       cl('<span class="ocl-label">PLEASE INSERT BIOMETRICS PERIPHERAL TO CONTINUE</span>');
-      Sound.press();
+      Sound.creak(); Sound.press();
       hold(700, function(){
         cl('<span class="ocl-label">PRESS CONFIGURED FINGER INTO PERIPHERAL NOW.</span>');
         prog.style.width = "40%";
@@ -3583,7 +4277,7 @@ function officeBoot(){
     function step4(){                                  /* 4 ÔÇö retinal scan */
       head(4, "biometric \u00b7 retinal scan");
       cl('<span class="ocl-label">PLEASE LOOK INTO RETINAL SCANNER NOW</span>');
-      prog.style.width = "54%"; Sound.scan();
+      prog.style.width = "54%"; Sound.creak(); Sound.scan();
       hold(1550, function(){
         cl('<span class="ocl-ok">_confirmed</span>');
         Sound.secure(); Sound.sigh();
